@@ -113,16 +113,14 @@
             android:fontFamily="sans-serif"/>
 
         <Button
-            android:id="@+id/btnCadastrar"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="18dp"
-            android:background="@drawable/bg_button"
+            android:backgroundTint="#3D4460"
             android:text="@string/cadastrar"
+            android:textColor="#FFFFFF"
             android:textStyle="bold"
-            android:textSize="18sp"
-            android:fontFamily="sans-serif"/>
-
+            android:textSize="18sp"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
