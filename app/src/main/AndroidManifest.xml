@@ -11,17 +11,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FinControl">
-        <activity
-            android:name=".CadastroActivity"/>
+
+        <activity android:name=".CadastroActivity"/>
+        <activity android:name=".CarteiraActivity"/>
+        <activity android:name=".ExtratoActivity"/>
+        <activity android:name=".LancamentosActivity"/>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

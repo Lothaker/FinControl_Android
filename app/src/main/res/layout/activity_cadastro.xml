@@ -115,6 +115,7 @@
             android:buttonTint="#2F3650"/>
 
         <Button
+            android:id="@+id/btnCadastrar"
             android:layout_width="200dp"
             android:layout_height="68dp"
             android:layout_gravity="center"

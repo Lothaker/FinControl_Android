@@ -20,36 +20,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            app:cardCornerRadius="18dp"
-            app:cardElevation="0dp">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="6dp"
-                android:scaleType="centerInside"
-                android:src="@drawable/user" />
-        </com.google.android.material.card.MaterialCardView>
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/logo_fc_branca"
+            android:scaleType="fitCenter"
+            android:contentDescription="Logo"/>
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="253dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="sans-serif"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:text="Minha Carteira"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <ImageView
+            android:id="@+id/btnLogout"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:contentDescription="Sair"
-            android:src="@drawable/logout" />
+            android:src="@drawable/logout"
+            android:clickable="true"
+            android:focusable="true"/>
     </LinearLayout>
 
     <ScrollView
@@ -141,8 +137,7 @@
                     android:layout_width="200dp"
                     android:layout_height="200dp"
                     android:contentDescription="Gráfico financeiro"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/grafico" />
+                    android:scaleType="fitCenter" />
             </LinearLayout>
 
             <Button
@@ -176,6 +171,7 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:id="@+id/btnCarteira"
             android:src="@drawable/carteira_icon"
             android:layout_margin="40dp"
             android:contentDescription="Carteira"/>
@@ -183,13 +179,15 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/grafico_icon"
+            android:id="@+id/btnGrafico"
+            android:src="@drawable/adicionar_icon"
             android:layout_margin="40dp"
             android:contentDescription="Gráfico"/>
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:id="@+id/btnExtrato"
             android:src="@drawable/extrato_icon"
             android:layout_margin="40dp"
             android:contentDescription="Extrato"/>
