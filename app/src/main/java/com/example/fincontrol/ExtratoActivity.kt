@@ -2,81 +2,97 @@ package com.example.fincontrol
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
+import com.example.fincontrol.data.CategoryRepository
+import com.example.fincontrol.data.SessionManager
+import com.example.fincontrol.data.TransactionRepository
+import com.example.fincontrol.model.FinanceTransaction
+import com.example.fincontrol.model.TransactionType
+import com.example.fincontrol.ui.TransactionAdapter
 
 class ExtratoActivity : AppCompatActivity() {
+
+    private lateinit var sessionManager: SessionManager
+    private lateinit var transactionRepository: TransactionRepository
+    private lateinit var categoryRepository: CategoryRepository
+    private lateinit var adapter: TransactionAdapter
+    private var userId: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_extrato)
 
-        // VOLTAR → voltar para Carteira
-        findViewById<ImageView>(R.id.btnVoltar).setOnClickListener {
-            startActivity(Intent(this, CarteiraActivity::class.java))
-            finish()
+        sessionManager = SessionManager(this)
+        transactionRepository = TransactionRepository(this)
+        categoryRepository = CategoryRepository(this)
+        userId = sessionManager.getLoggedUserId() ?: run {
+            goToLogin()
+            return
         }
 
-        // LOGOUT → voltar para login
-        findViewById<ImageView>(R.id.btnLogout).setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-        }
+        transactionRepository.syncRecurringTransactions(userId)
 
-        // RecyclerView com dados de exemplo
         val rv = findViewById<RecyclerView>(R.id.rvExtrato)
+        val tvEmpty = findViewById<TextView>(R.id.tvSemLancamentos)
         rv.layoutManager = LinearLayoutManager(this)
-        val itens = listOf(
-            Pair("↓", "R$ 35,00   Farmácia"),
-            Pair("↓", "R$ 120,00  Supermercado"),
-            Pair("↑", "R$ 1.500,00 Salário"),
-            Pair("↓", "R$ 80,00   Conta de luz")
+        adapter = TransactionAdapter(
+            context = this,
+            expenseCategories = categoryRepository.getByType(TransactionType.EXPENSE),
+            incomeCategories = categoryRepository.getByType(TransactionType.INCOME),
+            onUpdate = ::updateTransaction,
+            onDelete = ::deleteTransaction
         )
+        rv.adapter = adapter
+        loadTransactions(tvEmpty)
 
-        rv.adapter = object : RecyclerView.Adapter<ExtratoVH>() {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-                ExtratoVH(
-                    LayoutInflater.from(parent.context)
-                        .inflate(R.layout.item_extrato, parent, false)
-                )
-
-            override fun getItemCount() = itens.size
-
-            override fun onBindViewHolder(holder: ExtratoVH, position: Int) {
-                val (seta, desc) = itens[position]
-                holder.tvSeta.text = seta
-                holder.tvSeta.setTextColor(
-                    if (seta == "↓") 0xFFEA4335.toInt() else 0xFF34A853.toInt()
-                )
-                holder.tvDescricao.text = desc
-            }
+        findViewById<ImageView>(R.id.btnVoltar).setOnClickListener { finish() }
+        findViewById<ImageView>(R.id.btnLogout).setOnClickListener {
+            sessionManager.clear()
+            goToLogin()
         }
-
-        // Navbar
-        findViewById<ImageView>(R.id.btnCarteira).setOnClickListener {
-            startActivity(Intent(this, CarteiraActivity::class.java))
-            finish()
-        }
-
-        findViewById<ImageView>(R.id.btnGrafico).setOnClickListener {
-            startActivity(Intent(this, LancamentosActivity::class.java))
-            finish()
-        }
-
-        findViewById<ImageView>(R.id.btnExtrato).setOnClickListener {
-            // já está no Extrato
-        }
+        findViewById<ImageView>(R.id.btnCarteira).setOnClickListener { startActivity(Intent(this, CarteiraActivity::class.java)); finish() }
+        findViewById<ImageView>(R.id.btnGrafico).setOnClickListener { startActivity(Intent(this, LancamentosActivity::class.java)); finish() }
+        findViewById<ImageView>(R.id.btnExtrato).setOnClickListener { }
     }
-}
 
-class ExtratoVH(view: View) : RecyclerView.ViewHolder(view) {
-    val tvSeta: TextView = view.findViewById(R.id.tvSeta)
-    val tvDescricao: TextView = view.findViewById(R.id.tvDescricao)
+    private fun loadTransactions(tvEmpty: TextView) {
+        val transactions = transactionRepository.getTransactions(userId)
+        adapter.submitTransactions(transactions)
+        tvEmpty.visibility = if (transactions.isEmpty()) View.VISIBLE else View.GONE
+    }
+
+    private fun updateTransaction(transaction: FinanceTransaction) {
+        val updated = transactionRepository.updateTransaction(transaction)
+        toast(if (updated) "Lançamento atualizado." else "Não foi possível atualizar o lançamento.")
+        loadTransactions(findViewById(R.id.tvSemLancamentos))
+    }
+
+    private fun deleteTransaction(transaction: FinanceTransaction) {
+        AlertDialog.Builder(this)
+            .setTitle("Excluir lançamento")
+            .setMessage("Deseja realmente excluir este lançamento?")
+            .setPositiveButton("Excluir") { _, _ ->
+                val deleted = transactionRepository.deleteTransaction(userId, transaction.id)
+                toast(if (deleted) "Lançamento excluído." else "Não foi possível excluir o lançamento.")
+                loadTransactions(findViewById(R.id.tvSemLancamentos))
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
+    }
+
+    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }

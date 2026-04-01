@@ -4,42 +4,80 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.fincontrol.data.SessionManager
+import com.example.fincontrol.data.TransactionRepository
+import com.example.fincontrol.ui.BudgetBarChartView
+import com.example.fincontrol.util.CurrencyUtils
 
 class CarteiraActivity : AppCompatActivity() {
+
+    private lateinit var sessionManager: SessionManager
+    private lateinit var transactionRepository: TransactionRepository
+    private var balanceVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_carteira)
 
-        // Botão ADICIONAR → LançamentosActivity
+        sessionManager = SessionManager(this)
+        transactionRepository = TransactionRepository(this)
+
+        val userId = sessionManager.getLoggedUserId() ?: run {
+            goToLogin()
+            return
+        }
+
+        transactionRepository.syncRecurringTransactions(userId)
+
+        val tvSaldo = findViewById<TextView>(R.id.tvSaldo)
+        val tvReceitasMes = findViewById<TextView>(R.id.tvReceitasMes)
+        val tvDespesasMes = findViewById<TextView>(R.id.tvDespesasMes)
+        val tvResumoCategorias = findViewById<TextView>(R.id.tvResumoCategorias)
+        val chartView = findViewById<BudgetBarChartView>(R.id.chartView)
+
+        val summary = transactionRepository.getDashboardSummary(userId)
+        val balanceText = CurrencyUtils.formatFromCents(summary.balanceCents)
+        tvSaldo.text = "R$ ••••••"
+        findViewById<ImageView>(R.id.btnOlho).setOnClickListener {
+            balanceVisible = !balanceVisible
+            tvSaldo.text = if (balanceVisible) balanceText else "R$ ••••••"
+        }
+
+        tvReceitasMes.text = "Receitas do mês: ${CurrencyUtils.formatFromCents(summary.incomeMonthCents)}"
+        tvDespesasMes.text = "Despesas do mês: ${CurrencyUtils.formatFromCents(summary.expenseMonthCents)}"
+        chartView.submitData(summary.topExpenseCategories)
+        tvResumoCategorias.text = if (summary.topExpenseCategories.isEmpty()) {
+            "Nenhuma despesa lançada neste mês."
+        } else {
+            summary.topExpenseCategories.joinToString("\n") {
+                "• ${it.categoryName}: ${CurrencyUtils.formatFromCents(it.totalCents)}"
+            }
+        }
+
         findViewById<Button>(R.id.btnAdicionar).setOnClickListener {
             startActivity(Intent(this, LancamentosActivity::class.java))
         }
 
-        // LOGOUT → voltar para login
         findViewById<ImageView>(R.id.btnLogout).setOnClickListener {
-
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-
+            sessionManager.clear()
+            goToLogin()
         }
 
-        // Navbar
-        findViewById<ImageView>(R.id.btnCarteira).setOnClickListener {
-            startActivity(Intent(this, CarteiraActivity::class.java))
-            finish()
-        }
-
+        findViewById<ImageView>(R.id.btnCarteira).setOnClickListener { }
         findViewById<ImageView>(R.id.btnGrafico).setOnClickListener {
             startActivity(Intent(this, LancamentosActivity::class.java))
-            finish()
         }
-
         findViewById<ImageView>(R.id.btnExtrato).setOnClickListener {
             startActivity(Intent(this, ExtratoActivity::class.java))
-            finish()
         }
+    }
+
+    private fun goToLogin() {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,19 +10,16 @@
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:layout_marginTop="40dp"
-        android:layout_marginBottom="20dp"
-        android:contentDescription="@string/logo_desc"
-        android:scaleType="fitCenter"
         android:src="@drawable/logo_fc"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/formCard"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <LinearLayout
         android:id="@+id/formCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="24dp"
         android:background="@drawable/bg_card"
         android:orientation="vertical"
         android:padding="28dp"
@@ -37,8 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="30dp"
-            android:fontFamily="sans-serif"
+            android:layout_marginBottom="24dp"
             android:text="LOGIN"
             android:textColor="#000000"
             android:textSize="26sp"
@@ -47,10 +41,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:text="USUÁRIO"
+            android:text="USUÁRIO OU E-MAIL"
             android:textColor="#6D6D6D"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <EditText
@@ -59,22 +52,17 @@
             android:layout_height="50dp"
             android:layout_marginTop="6dp"
             android:background="@drawable/bg_input"
-            android:fontFamily="sans-serif"
-            android:hint="USUÁRIO"
-            android:inputType="textPersonName"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:textColor="#000000"
-            android:textColorHint="#9A9A9A" />
+            android:hint="Digite seu usuário ou e-mail"
+            android:inputType="textEmailAddress"
+            android:padding="14dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:fontFamily="sans-serif"
             android:text="SENHA"
             android:textColor="#6D6D6D"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <EditText
@@ -83,25 +71,20 @@
             android:layout_height="50dp"
             android:layout_marginTop="6dp"
             android:background="@drawable/bg_input"
-            android:fontFamily="sans-serif"
-            android:hint="SENHA"
+            android:hint="Digite sua senha"
             android:inputType="textPassword"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:textColor="#000000"
-            android:textColorHint="#9A9A9A" />
+            android:padding="14dp" />
 
         <Button
             android:id="@+id/btnEntrar"
             android:layout_width="200dp"
-            android:layout_height="68dp"
+            android:layout_height="60dp"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="22dp"
             android:backgroundTint="#2F3650"
-            android:fontFamily="sans-serif"
             android:text="ENTRAR"
             android:textColor="#FFFFFF"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <TextView
@@ -110,7 +93,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="18dp"
-            android:fontFamily="sans-serif"
             android:text="ESQUECEU A SENHA?"
             android:textColor="#6D6D6D"
             android:textSize="15sp"
@@ -122,12 +104,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="10dp"
-            android:fontFamily="sans-serif"
             android:text="CRIAR CONTA"
             android:textColor="#6D6D6D"
             android:textSize="15sp"
             android:textStyle="bold" />
-
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
